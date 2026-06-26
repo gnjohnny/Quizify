@@ -21,7 +21,7 @@ A modern, fast, and fully responsive Quiz Application built using vanilla web te
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/gnjohnny/open-trivia.git
+   git clone https://github.com/gnjohnny/Quizify.git
    ```
 2. Open `index.html` directly in your browser, or spin up a local server using an extension like Live Server.
 3. Select your settings and test your knowledge!
