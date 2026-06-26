@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quizify - Interactive Trivia Quiz App</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Animated Background Blobs -->
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Header with Theme Toggle -->
+    <header class="app-header">
+      <div class="logo">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>Quizify</span>
+      </div>
+      <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </header>
+
+    <main class="main-card">
+      
+      <!-- WELCOME / SETUP SCREEN -->
+      <section id="welcome-screen" class="screen active">
+        <div class="screen-header">
+          <h1>Test Your Knowledge</h1>
+          <p>Choose your settings below to fetch trivia questions dynamically and start testing your skills!</p>
+        </div>
+
+        <form id="setup-form" class="setup-form">
+          <div class="form-group">
+            <label for="quiz-category">Category</label>
+            <div class="select-wrapper">
+              <select id="quiz-category" name="category" required>
+                <option value="any">Any Category</option>
+                <!-- Categories populated by JS -->
+              </select>
+              <i class="fa-solid fa-chevron-down select-icon"></i>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="quiz-difficulty">Difficulty</label>
+              <div class="select-wrapper">
+                <select id="quiz-difficulty" name="difficulty">
+                  <option value="any">Any Difficulty</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+                <i class="fa-solid fa-chevron-down select-icon"></i>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="quiz-type">Question Type</label>
+              <div class="select-wrapper">
+                <select id="quiz-type" name="type">
+                  <option value="any">Any Type</option>
+                  <option value="multiple">Multiple Choice</option>
+                  <option value="boolean">True / False</option>
+                </select>
+                <i class="fa-solid fa-chevron-down select-icon"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="quiz-amount">Number of Questions</label>
+            <div class="range-container">
+              <input type="range" id="quiz-amount" name="amount" min="5" max="30" step="5" value="10">
+              <span id="amount-val" class="amount-badge">10</span>
+            </div>
+          </div>
+
+          <button type="submit" id="start-btn" class="btn btn-primary btn-block">
+            <span>Start Quiz</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+      </section>
+
+      <!-- SKELETON / LOADING SCREEN -->
+      <section id="loading-screen" class="screen">
+        <div class="skeleton-container">
+          <div class="skeleton-header">
+            <div class="skeleton skeleton-title-small"></div>
+            <div class="skeleton skeleton-circle"></div>
+          </div>
+          <div class="skeleton skeleton-progress"></div>
+          <div class="skeleton skeleton-question"></div>
+          <div class="skeleton-options">
+            <div class="skeleton skeleton-option"></div>
+            <div class="skeleton skeleton-option"></div>
+            <div class="skeleton skeleton-option"></div>
+            <div class="skeleton skeleton-option"></div>
+          </div>
+          <p class="loading-text">Fetching question database from trivia servers...</p>
+        </div>
+      </section>
+
+      <!-- QUIZ INTERFACE SCREEN -->
+      <section id="quiz-screen" class="screen">
+        <!-- Quiz Header / Progress Bar -->
+        <div class="quiz-header">
+          <div class="quiz-progress-info">
+            <span id="progress-text">Question 1 of 10</span>
+            <span class="quiz-score-badge"><i class="fa-solid fa-star"></i> <span id="running-score">0</span></span>
+          </div>
+          <div class="progress-bar-container">
+            <div id="progress-bar-fill" class="progress-bar-fill" style="width: 10%;"></div>
+          </div>
+          <!-- Timer and Details -->
+          <div class="timer-row">
+            <span id="category-badge" class="badge">General Knowledge</span>
+            <div class="timer-badge">
+              <i class="fa-regular fa-clock" id="timer-icon"></i>
+              <span id="timer-countdown">15</span>s
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Box -->
+        <div class="question-container">
+          <h2 id="question-text">Loading question...</h2>
+        </div>
+
+        <!-- Answer Options -->
+        <div id="options-container" class="options-grid">
+          <!-- Button choices will be injected here -->
+        </div>
+
+        <div class="quiz-footer-actions">
+          <button id="quit-quiz-btn" class="btn btn-text">
+            <i class="fa-solid fa-arrow-left"></i> Quit Quiz
+          </button>
+        </div>
+      </section>
+
+      <!-- ERROR / RETRY SCREEN -->
+      <section id="error-screen" class="screen">
+        <div class="error-container">
+          <div class="error-icon-wrapper">
+            <i class="fa-solid fa-circle-exclamation"></i>
+          </div>
+          <h2>Oops! Something Went Wrong</h2>
+          <p id="error-message">We couldn't load questions from the trivia API. This might be due to network issues or restrictive parameters.</p>
+          <div class="error-actions">
+            <button id="retry-btn" class="btn btn-primary">
+              <i class="fa-solid fa-rotate-right"></i> Try Again
+            </button>
+            <button id="error-back-btn" class="btn btn-secondary">
+              <i class="fa-solid fa-house"></i> Home
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULTS SCREEN -->
+      <section id="results-screen" class="screen">
+        <div class="results-header">
+          <h2>Quiz Completed!</h2>
+          <div class="results-visual">
+            <svg class="progress-ring" width="160" height="160">
+              <circle class="progress-ring__circle-bg" stroke="var(--border-color)" stroke-width="12" fill="transparent" r="70" cx="80" cy="80"/>
+              <circle id="score-ring" class="progress-ring__circle" stroke="var(--primary-color)" stroke-width="12" fill="transparent" r="70" cx="80" cy="80"/>
+            </svg>
+            <div class="score-percentage-display">
+              <span id="result-percentage">0%</span>
+            </div>
+          </div>
+          
+          <h3 id="result-feedback">Excellent Work!</h3>
+          <p class="final-score-text">You scored <strong id="result-score">0</strong> out of <strong id="result-total">10</strong> questions correct.</p>
+        </div>
+
+        <div class="results-actions">
+          <button id="play-again-btn" class="btn btn-primary">
+            <i class="fa-solid fa-rotate-left"></i> Play Again
+          </button>
+          <button id="review-toggle-btn" class="btn btn-secondary">
+            <i class="fa-solid fa-list-check"></i> Show Review
+          </button>
+        </div>
+
+        <!-- Detailed Breakdown -->
+        <div id="review-section" class="review-section collapsed">
+          <h4>Question Breakdown</h4>
+          <div id="summary-container" class="summary-list">
+            <!-- Review items will be injected here -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 Quizify. Powered by Open Trivia DB.</p>
+    </footer>
+  </div>
+
+  <!-- Custom Script -->
+  <script src="app.js"></script>
+</body>
+</html>
